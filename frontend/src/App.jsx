@@ -272,7 +272,7 @@ function LoginPage({ onLogin }) {
           <div className="signup-prompt">
             New to Netflix? <a href="#" className="signup-link">Sign up now.</a>
           </div>
-          <p className="hint">Test: kanagaraj@netflix / knx123</p>
+          <p className="hint">Test: kanagaraj@netflix.com / knx123</p>
         </div>
       </div>
     </div>
