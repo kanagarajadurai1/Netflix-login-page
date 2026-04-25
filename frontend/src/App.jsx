@@ -45,7 +45,7 @@ const HERO = MOVIES.trending[1]
 // Step 2: Copy the backend URL from Vercel dashboard
 // Step 3: Replace the URL below with your actual backend URL
 // Example: 'https://netflix-login-backend.vercel.app/api/login'
-const BACKEND_URL = 'https://netflix-login-page-rspk.vercel.app/'
+const BACKEND_URL = 'https://netflix-login-page-h3tv.vercel.app/'
 
 // ── Login Page Background Poster Grid ──
 function PosterGrid() {
