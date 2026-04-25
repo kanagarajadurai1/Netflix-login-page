@@ -40,12 +40,11 @@ const MOVIES = {
 const ALL_MOVIES = Object.values(MOVIES).flat()
 const HERO = MOVIES.trending[1]
 
-// ── LOGIN API URL — UPDATE THIS AFTER DEPLOYING BACKEND ON VERCEL ──
-// Step 1: Deploy backend on Vercel first
-// Step 2: Copy the backend URL from Vercel dashboard
-// Step 3: Replace the URL below with your actual backend URL
-// Example: 'https://netflix-login-backend.vercel.app/api/login'
-const BACKEND_URL = 'https://netflix-login-page-h3tv.vercel.app/'
+// ── Valid Users (no backend needed) ──
+const VALID_USERS = [
+  { email: 'user@netflix.com', password: 'password123' },
+  { email: 'kanagaraj@netflix.com', password: 'knx123' },
+]
 
 // ── Login Page Background Poster Grid ──
 function PosterGrid() {
@@ -136,7 +135,6 @@ function Dashboard({ onSignOut }) {
 
   return (
     <div className="dashboard">
-      {/* Navbar */}
       <nav className="dash-nav">
         <span className="netflix-logo">NETFLIX</span>
         <div className="nav-links">
@@ -153,7 +151,6 @@ function Dashboard({ onSignOut }) {
         </div>
       </nav>
 
-      {/* Search Results */}
       {filtered ? (
         <div className="search-results">
           <h2 className="row-title">Results for "{search}"</h2>
@@ -165,7 +162,6 @@ function Dashboard({ onSignOut }) {
         </div>
       ) : (
         <>
-          {/* Hero Banner */}
           <div className="hero-banner" style={{ backgroundImage: `url(${HERO.backdrop})` }}>
             <div className="hero-overlay" />
             <div className="hero-content">
@@ -179,12 +175,11 @@ function Dashboard({ onSignOut }) {
             </div>
           </div>
 
-          {/* Movie Rows */}
           <div className="rows-container">
-            <MovieRow title="🔥 Trending Now"   movies={MOVIES.trending} onSelect={setSelected} />
-            <MovieRow title="💥 Action & Adventure" movies={MOVIES.action}   onSelect={setSelected} />
-            <MovieRow title="🎭 Award-Winning Dramas" movies={MOVIES.drama}  onSelect={setSelected} />
-            <MovieRow title="😂 Comedies"        movies={MOVIES.comedy}  onSelect={setSelected} />
+            <MovieRow title="🔥 Trending Now"         movies={MOVIES.trending} onSelect={setSelected} />
+            <MovieRow title="💥 Action & Adventure"   movies={MOVIES.action}   onSelect={setSelected} />
+            <MovieRow title="🎭 Award-Winning Dramas" movies={MOVIES.drama}    onSelect={setSelected} />
+            <MovieRow title="😂 Comedies"             movies={MOVIES.comedy}   onSelect={setSelected} />
           </div>
         </>
       )}
@@ -201,25 +196,31 @@ function LoginPage({ onLogin }) {
   const [error, setError]       = useState('')
   const [loading, setLoading]   = useState(false)
 
-  const handleLogin = async (e) => {
+  // ✅ No backend needed — works 100% on Vercel
+  const handleLogin = (e) => {
     e.preventDefault()
     setError('')
-    if (!email || !password) { setError('Please enter your email and password.'); return }
-    setLoading(true)
-    try {
-      const res  = await fetch(BACKEND_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      })
-      const data = await res.json()
-      if (data.success) onLogin()
-      else setError(data.message)
-    } catch {
-      setError('Cannot reach server. Please check your backend deployment on Vercel.')
-    } finally {
-      setLoading(false)
+
+    if (!email || !password) {
+      setError('Please enter your email and password.')
+      return
     }
+
+    setLoading(true)
+
+    setTimeout(() => {
+      const user = VALID_USERS.find(
+        u => u.email === email && u.password === password
+      )
+
+      if (user) {
+        onLogin()
+      } else {
+        setError('Incorrect email or password.')
+      }
+
+      setLoading(false)
+    }, 800)
   }
 
   return (
@@ -236,11 +237,23 @@ function LoginPage({ onLogin }) {
           <h1>Sign In</h1>
           <form onSubmit={handleLogin}>
             <div className={`input-group ${email ? 'has-val' : ''}`}>
-              <input type="email" id="em" value={email} onChange={e => setEmail(e.target.value)} autoComplete="email" />
+              <input
+                type="email"
+                id="em"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                autoComplete="email"
+              />
               <label htmlFor="em">Email or phone number</label>
             </div>
             <div className={`input-group ${password ? 'has-val' : ''}`}>
-              <input type="password" id="pw" value={password} onChange={e => setPassword(e.target.value)} autoComplete="current-password" />
+              <input
+                type="password"
+                id="pw"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                autoComplete="current-password"
+              />
               <label htmlFor="pw">Password</label>
             </div>
             {error && (
@@ -259,7 +272,7 @@ function LoginPage({ onLogin }) {
           <div className="signup-prompt">
             New to Netflix? <a href="#" className="signup-link">Sign up now.</a>
           </div>
-          <p className="hint">Test: kanagaraj@netflix.com / knx123</p>
+          <p className="hint">Test: user@netflix.com / password123</p>
         </div>
       </div>
     </div>
