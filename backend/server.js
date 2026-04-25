@@ -1,44 +1,41 @@
-const express = require('express');
-const cors = require('cors');
+const express = require('express')
+const cors = require('cors')
+const app = express()
 
-const app = express();
-
+// Allow ALL origins — fixes CORS on Vercel
 app.use(cors({
-  origin: 'http://localhost:5173',
-  methods: ['POST', 'GET'],
-}));
+  origin: '*',
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type']
+}))
 
-app.use(express.json());
+app.use(express.json())
 
-const MOCK_USER = {
-  email: 'user@netflix.com',
-  password: 'password123'
-};
+// Test route — open your backend URL in browser to check
+app.get('/', (req, res) => {
+  res.json({ status: 'Backend is running!' })
+})
 
+// Login route
 app.post('/api/login', (req, res) => {
-  const { email, password } = req.body;
+  const { email, password } = req.body
 
-  if (!email || !password) {
-    return res.status(400).json({
-      success: false,
-      message: 'Please fill in all fields.'
-    });
+  // Hardcoded test credentials
+  const validUsers = [
+    { email: 'user@netflix.com', password: 'password123' },
+    { email: 'kanagaraj@netflix.com', password: 'knx123' }
+  ]
+
+  const user = validUsers.find(
+    u => u.email === email && u.password === password
+  )
+
+  if (user) {
+    res.json({ success: true, message: 'Login successful!' })
+  } else {
+    res.status(401).json({ success: false, message: 'Incorrect email or password.' })
   }
+})
 
-  if (email === MOCK_USER.email && password === MOCK_USER.password) {
-    return res.json({
-      success: true,
-      message: 'Login successful!'
-    });
-  }
-
-  return res.status(401).json({
-    success: false,
-    message: 'Incorrect email or password.'
-  });
-});
-
-const PORT = 5000;
-app.listen(PORT, () => {
-  console.log(`Backend running on http://localhost:${PORT}`);
-});
+// Required for Vercel — export the app
+module.exports = app
