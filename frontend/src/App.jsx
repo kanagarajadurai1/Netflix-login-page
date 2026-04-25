@@ -38,7 +38,14 @@ const MOVIES = {
 }
 
 const ALL_MOVIES = Object.values(MOVIES).flat()
-const HERO = MOVIES.trending[1] // Dark Knight as hero
+const HERO = MOVIES.trending[1]
+
+// ── LOGIN API URL — UPDATE THIS AFTER DEPLOYING BACKEND ON VERCEL ──
+// Step 1: Deploy backend on Vercel first
+// Step 2: Copy the backend URL from Vercel dashboard
+// Step 3: Replace the URL below with your actual backend URL
+// Example: 'https://netflix-login-backend.vercel.app/api/login'
+const BACKEND_URL = 'https://YOUR-BACKEND-PROJECT-NAME.vercel.app/api/login'
 
 // ── Login Page Background Poster Grid ──
 function PosterGrid() {
@@ -200,7 +207,7 @@ function LoginPage({ onLogin }) {
     if (!email || !password) { setError('Please enter your email and password.'); return }
     setLoading(true)
     try {
-      const res  = await fetch('http://localhost:5000/api/login', {
+      const res  = await fetch(BACKEND_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -209,7 +216,7 @@ function LoginPage({ onLogin }) {
       if (data.success) onLogin()
       else setError(data.message)
     } catch {
-      setError('Cannot reach server. Make sure backend is running on port 5000.')
+      setError('Cannot reach server. Please check your backend deployment on Vercel.')
     } finally {
       setLoading(false)
     }
